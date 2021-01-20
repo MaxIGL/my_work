@@ -61,7 +61,7 @@ neighbors.push_back((*cloud)[pointIdxRadiusSearch[y]]);}
   compute3DCentroid (neighbors, xyz_centroid);
   for(int z=0;z<3;z++) xyz_cent(z)=xyz_centroid(z);
   // Compute the 3x3 covariance matrix
-  computeCovarianceMatrix (*cloud, xyz_centroid, covariance_matrix);
+  computeCovarianceMatrix (neighbors, xyz_centroid, covariance_matrix);
   Eigen::Matrix3f mat;
 mat(0,0),mat(1,1),mat(2,2)=epsilon;
 mat(1,0),mat(1,2),mat(2,0),mat(2,1),mat(0,1),mat(0,2)=0;
