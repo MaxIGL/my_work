@@ -3,24 +3,24 @@
 <remap from="reading_pcd_before/pcl_output" to="pcl_before" />
 <node name="reading_pcd_before" pkg="my_pcl_tutorial" type="read_pcd" >
 
- <param name="input" type="string" value="/home/dcas/m.dreier/Documents/PCD_FILES/test_filtering.pcd" />
+ <param name="input" type="string" value="/home/dcas/m.dreier/Documents/PCD_FILES/Test2/D435/TEST2DALLMATERIAL.pcd" />
 
 
- <param name="frame_id" type="string" value="world" />
+ <param name="frame_id" type="string" value="map" />
 
 
 </node>
-<remap from="reading_pcd_after/pcl_output" to="pcl_after" />
+<!--remap from="reading_pcd_after/pcl_output" to="pcl_after" />
 
 <node name="reading_pcd_after" pkg="my_pcl_tutorial" type="read_pcd" >
 
- <param name="input" type="string" value="/home/dcas/m.dreier/Documents/PCD_FILES/test_filtering_completed_5_06.pcd" />
+ <param name="input" type="string" value="/home/dcas/m.dreier/Documents/PCD_FILES/test2D_compl.pcd" />
 
 
 
-<param name="frame_id" type="string" value="world" />
+<param name="frame_id" type="string" value="map" />
 
 
-</node>
+</node-->
 
 </launch>

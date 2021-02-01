@@ -26,10 +26,10 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
   // Create the filtering object
   pcl::ProgressiveMorphologicalFilter<pcl::PointXYZ> pmf;
   pmf.setInputCloud (cloud);
-  pmf.setMaxWindowSize (0.8);
-  pmf.setSlope (1.0f);
-  pmf.setInitialDistance (0.05f);
-  pmf.setMaxDistance (0.2f);
+  pmf.setMaxWindowSize (6);
+  pmf.setSlope (0.05f);
+  pmf.setInitialDistance (0.25f);
+  pmf.setMaxDistance (2.5f);
   pmf.extract (ground->indices);
 
   // Create the filtering object

@@ -26,7 +26,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::Poi
 
 // Fill in the cloud data
 pcl::PCDReader reader;
-reader.read ("//home/dcas/m.dreier/Documents/PCD_FILES/outside.pcd", *cloud);
+reader.read ("/home/dcas/m.dreier/Documents/PCD_FILES/Test2/D435/Test2DALLRADIUSx2.pcd", *cloud);
 
 pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
 
@@ -47,7 +47,6 @@ search_point.x=it->x;
 search_point.y=it->y;
 search_point.z=it->z;
 compt+=1;
-std::cout << compt;
   if ( kdtree.radiusSearch (search_point, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0 ){
 
 
@@ -102,7 +101,7 @@ pt.z=A_pt(2);
 
 //Save the output cloud_filtered
 pcl::PCDWriter writer;
-  writer.write ("/home/dcas/m.dreier/Documents/PCD_FILES/outside_denoised.pcd", *cloud_filtered, false);
+  writer.write ("/home/dcas/m.dreier/Documents/PCD_FILES/Test2/D435/Test2DALLRADIUSx2DENOISINGx1.pcd", *cloud_filtered, false);
 
 return(0);
 }

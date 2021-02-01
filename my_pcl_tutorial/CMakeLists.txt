@@ -147,6 +147,7 @@ add_executable(radius_pcl src/radius.cpp)
 add_executable(radius_script_pcl src/radius_script.cpp)
 add_executable(read_pcd src/read_pcd.cpp)
 add_executable(denoising_pcl src/denoising.cpp)
+add_executable(denoising_script_pcl src/denoising_script.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -175,7 +176,7 @@ target_link_libraries(read_pcd ${catkin_LIBRARIES})
 target_link_libraries(read_pcd ${PCL_LIBRARIES})
 target_link_libraries(denoising_pcl ${PCL_LIBRARIES})
 target_link_libraries(denoising_pcl ${catkin_LIBRARIES})
-
+target_link_libraries(denoising_script_pcl ${PCL_LIBRARIES})
 
 
 #############
