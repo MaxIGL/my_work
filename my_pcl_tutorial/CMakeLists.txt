@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   roscpp
   sensor_msgs
+  nav_msgs
   grid_map_core
   grid_map_msgs
   grid_map_ros
@@ -152,6 +153,7 @@ add_executable(read_pcd src/read_pcd.cpp)
 add_executable(denoising_pcl src/denoising.cpp)
 add_executable(denoising_script_pcl src/denoising_script.cpp)
 add_executable(grid_map_pcl_saver_script_pcl src/grid_map_pcl_saver_script.cpp)
+add_executable(grid_map_generator_script_pcl src/grid_map_generator_script.cpp)
 
 
 ## Rename C++ executable without prefix
@@ -184,6 +186,9 @@ target_link_libraries(denoising_pcl ${catkin_LIBRARIES})
 target_link_libraries(denoising_script_pcl ${PCL_LIBRARIES})
 target_link_libraries(grid_map_pcl_saver_script_pcl ${catkin_LIBRARIES})
 target_link_libraries(grid_map_pcl_saver_script_pcl ${PCL_LIBRARIES})
+target_link_libraries(grid_map_generator_script_pcl ${catkin_LIBRARIES})
+target_link_libraries(grid_map_generator_script_pcl ${PCL_LIBRARIES})
+
 
 
 #############

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <launch>
-  <arg name="folder_path"            default="/home/dcas/m.dreier/Documents/PCD_FILES/Test2/D435"/>
-  <arg name="pcd_filename"           default="Test2DALLRADIUSx2DENOISINGx1.pcd" />
+  <arg name="folder_path"            default="/home/dcas/m.dreier/Documents/PCD_FILES/Test3/Laser"/>
+  <arg name="pcd_filename"           default="Outside_banc_radiusx1_denoisedx1.pcd" />
   <arg name="map_rosbag_topic"       default="grid_map" />
   <arg name="output_grid_map"        default="elevation_map.bag" />
   <arg name="map_frame"              default="map" />

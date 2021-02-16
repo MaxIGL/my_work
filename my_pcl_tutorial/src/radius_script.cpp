@@ -14,19 +14,19 @@ int
 // Fill in the cloud data
   pcl::PCDReader reader;
   // Replace the path below with the path where you saved your file
-  reader.read ("//home/dcas/m.dreier/Documents/PCD_FILES/Test2/D435/Test2DALLRADIUSx1.pcd", *cloud);
+  reader.read ("/home/dcas/m.dreier/Documents/PCD_FILES/Test3/Laser/Outside_raw_banc_laser.pcd", *cloud);
 
 pcl::RadiusOutlierRemoval<pcl::PointXYZ> outrem;
     // build the filter
     outrem.setInputCloud(cloud);
     outrem.setRadiusSearch(0.06);
-    outrem.setMinNeighborsInRadius (5);
+    outrem.setMinNeighborsInRadius (4);
     outrem.setKeepOrganized(false);
     // apply filter
     outrem.filter (*cloud_filtered);
 
 pcl::PCDWriter writer;
-  writer.write ("/home/dcas/m.dreier/Documents/PCD_FILES/Test2/D435/Test2DALLRADIUSx2.pcd", *cloud_filtered, false);
+  writer.write ("/home/dcas/m.dreier/Documents/PCD_FILES/Test3/Laser/Outside_banc_radiusx1.pcd", *cloud_filtered, false);
 
 return (0);
 }
