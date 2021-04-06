@@ -1,3 +1,6 @@
+#include "ros/ros.h"
+#include "my_pcl_tutorial/occupancymap_generator.h"
+
 #include <cmath>
 #include <vector>
 #include<pcl/point_cloud.h>
@@ -11,17 +14,22 @@
 #include "yaml-cpp/yaml.h"
 #include <fstream>
 
-int main(int argc, char** argv)
+bool generator(my_pcl_tutorial::occupancymap_generator::Request  &req,
+               my_pcl_tutorial::occupancymap_generator::Response &res)
 {
-//Initialization
+
+// Initialization
+
+ROS_INFO("request: file_in=%s, file_out=%s, frame_id=%s, resolution=%lf, resolution_discretized=%lf", req.file_in.c_str(), req.file_out.c_str(), req.frame_id.c_str(), req.resolution, req.resolution_discretized);
+
 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
 pcl::PCDReader reader;
-reader.read ("/home/dcas/m.dreier/Documents/PCD_FILES/Test2/D435/gridmappclDenoisedx1.pcd", *cloud);
+reader.read (req.file_in, *cloud);
 int width;
 int height;
 double origin_x;
 double origin_y;
-double resolution=0.06;
+double resolution=req.resolution;
 
 //Get Min and Max x and y and compute width and height of the 2D map
 float min_x = cloud->points[0].x, min_y = cloud->points[0].y, max_x = cloud->points[0].x, max_y = cloud->points[0].y,min_z=cloud->points[0].z,max_z=cloud->points[0].z;
@@ -132,9 +140,6 @@ int compteur=0;
 float precedent=twofiveD_depth[num][0];
 for (size_t Iter=0; Iter!=twofiveD_depth[num].size();Iter++){
 
-if (precedent-twofiveD_depth[num][Iter]>=0.04){
-std::cout<< "Alerte au gogol !";}
-
 //if (precedent-twofiveD_depth[num][Iter]<=0.04){
 moyenne+=twofiveD_depth[num][Iter];
 precedent=twofiveD_depth[num][Iter];
@@ -216,7 +221,7 @@ occupancygridlist[j+1+width*(i+1)]=100;} //Add obstacle and only obstacle on the
 //Create the final sensor::msg occupancygrid 2D occupancy map
 
 nav_msgs::OccupancyGrid occupancygrid;
-occupancygrid.header.frame_id="map";
+occupancygrid.header.frame_id=req.frame_id;
 occupancygrid.info.resolution=resolution;
 occupancygrid.info.width=width;
 occupancygrid.info.height=height;
@@ -230,7 +235,7 @@ occupancygrid.data=occupancygridlist;
 
 
 //Code for Jasmine map
-double res_discret=0.1;
+double res_discret=req.resolution_discretized;
 int cotes= res_discret/resolution+1;
 int rectangle_large=width/cotes;
 int restant_large=width-rectangle_large*cotes;
@@ -273,7 +278,7 @@ else if(percentage_unknown>=0.4) griddiscret[i]=-1;}
 
 
 nav_msgs::OccupancyGrid occupancygriddiscret;
-occupancygriddiscret.header.frame_id="map";
+occupancygriddiscret.header.frame_id=req.resolution_discretized;
 occupancygriddiscret.info.resolution=cotes*resolution;
 occupancygriddiscret.info.width=rectangle_large;
 occupancygriddiscret.info.height=rectangle_haut;
@@ -286,18 +291,18 @@ occupancygriddiscret.info.origin.orientation.w = 1.0;
 occupancygriddiscret.data=griddiscret;
 
 //Save the map to a file
-std::string mapname="/home/dcas/m.dreier/Documents/FinalGrid";
+std::string mapname=req.file_out;
 int threshold_free=25;
 int threshold_occupied=65;
 
 //As a pgm file 
 
-std::string mapdatafile_discret = mapname + "_discret.pgm";
+std::string mapdatafile_discret = mapname + "_discretized.pgm";
       ROS_INFO("Writing map occupancy data to %s", mapdatafile_discret.c_str());
       FILE* out_discret = fopen(mapdatafile_discret.c_str(), "w");
       if (!out_discret)
       {
-        std::cout<< "Couldn't save map file to %s", mapdatafile_discret.c_str();
+        ROS_INFO( "Couldn't save map file to %s", mapdatafile_discret.c_str());
         return 0;
       }
 
@@ -315,7 +320,7 @@ std::string mapdatafile_discret = mapname + "_discret.pgm";
       fclose(out_discret);
 
 
-      std::string mapmetadatafile_discret = mapname + "_discret.yaml";
+      std::string mapmetadatafile_discret = mapname + "_discretized.yaml";
       ROS_INFO("Writing map occupancy data to %s", mapmetadatafile_discret.c_str());
       FILE* yaml_discret = fopen(mapmetadatafile_discret.c_str(), "w");
 
@@ -327,7 +332,7 @@ std::string mapdatafile_discret = mapname + "_discret.pgm";
 
 /*
 //Save the map to a file
-std::string mapname="/home/dcas/m.dreier/Documents/FinalGrid";
+std::string mapname=req.file_out;
 int threshold_free=25;
 int threshold_occupied=65;
 */
@@ -339,7 +344,7 @@ std::string mapdatafile = mapname + ".pgm";
       FILE* out = fopen(mapdatafile.c_str(), "w");
       if (!out)
       {
-        std::cout<< "Couldn't save map file to %s", mapdatafile.c_str();
+        ROS_INFO( "Couldn't save map file to %s", mapdatafile.c_str());
         return 0;
       }
 
@@ -392,6 +397,19 @@ if ((x+y)%15==0) fprintf(txt,"\n");
               mapdatafile.c_str(), occupancygrid.info.resolution, occupancygrid.info.origin.position.x, occupancygrid.info.origin.position.y, 0.);
 
       fclose(yaml);
- 
-return 0;
+
+   ROS_INFO("Sending back response:\n 2D Occupancy grid map generation from 3D DEM map was a success \n Some information about the occupancy grid map : \n Coordinates of origin point :\n Origin.x = %lf \n Origin.y=%lf \n Occupancy width=%d \n Occupancy height=%d \n Resolution=%lfm \n Some information about the discretized grid map : \n Width=%d \n Height=%d \n Discretized resolution=%lfm \n", origin_x, origin_y, width, height, resolution, occupancygriddiscret.info.width, occupancygriddiscret.info.height, occupancygriddiscret.info.resolution) ;
+  return true;
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "occupancymap_generator_server");
+  ros::NodeHandle n;
+
+  ros::ServiceServer service = n.advertiseService("occupancymap generation", generator);
+  ROS_INFO("Ready to generate a 2D Occupancy Grid map from a 3D DEM map (Pointcloud .pcd type)");
+  ros::spin();
+
+  return 0;
 }

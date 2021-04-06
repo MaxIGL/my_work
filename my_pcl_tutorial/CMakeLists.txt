@@ -17,6 +17,9 @@ find_package(catkin REQUIRED COMPONENTS
   grid_map_core
   grid_map_msgs
   grid_map_ros
+  std_msgs
+  message_generation
+  rospy
 )
 find_package(PCL 1.3 REQUIRED COMPONENTS segmentation)
 find_package(Eigen3 REQUIRED)
@@ -56,18 +59,18 @@ find_package(Eigen3 REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+ add_message_files(
+   FILES
+   Num.msg
+ )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+ add_service_files(
+   FILES
+   denoising.srv
+   occupancymap_generator.srv
+   conversion_extraction.srv
+ )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -77,10 +80,10 @@ find_package(Eigen3 REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   sensor_msgs
-# )
+ generate_messages(
+   DEPENDENCIES
+   std_msgs
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -112,6 +115,7 @@ generate_dynamic_reconfigure_options(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+CATKIN_DEPENDS message_runtime
 #  INCLUDE_DIRS include
 #  LIBRARIES my_pcl_tutorial
  # CATKIN_DEPENDS pcl_conversions pcl_ros roscpp sensor_msgs
@@ -155,6 +159,16 @@ add_executable(denoising_script_pcl src/denoising_script.cpp)
 add_executable(grid_map_pcl_saver_script_pcl src/grid_map_pcl_saver_script.cpp)
 add_executable(grid_map_generator_script_pcl src/grid_map_generator_script.cpp)
 
+add_executable(denoising_server src/denoising_server.cpp)
+add_executable(denoising_client src/denoising_client.cpp)
+
+add_executable(occupancymap_generator_server src/occupancymap_generator_server.cpp)
+add_executable(occupancymap_generator_client src/occupancymap_generator_client.cpp)
+
+add_executable(conversion_extraction_server src/conversion_extraction_server.cpp)
+add_executable(conversion_extraction_client src/conversion_extraction_client.cpp)
+
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -170,6 +184,14 @@ add_dependencies(read_pcd ${PROJECT_NAME}_gencfg)
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+add_dependencies(denoising_server my_pcl_tutorial_gencpp)
+add_dependencies(denoising_client my_pcl_tutorial_gencpp)
+
+add_dependencies(occupancymap_generator_server my_pcl_tutorial_gencpp)
+add_dependencies(occupancymap_generator_client my_pcl_tutorial_gencpp)
+
+add_dependencies(conversion_extraction_server my_pcl_tutorial_gencpp)
+add_dependencies(conversion_extraction_client my_pcl_tutorial_gencpp)
 
 
 target_link_libraries(example_pcl ${catkin_LIBRARIES})
@@ -188,6 +210,16 @@ target_link_libraries(grid_map_pcl_saver_script_pcl ${catkin_LIBRARIES})
 target_link_libraries(grid_map_pcl_saver_script_pcl ${PCL_LIBRARIES})
 target_link_libraries(grid_map_generator_script_pcl ${catkin_LIBRARIES})
 target_link_libraries(grid_map_generator_script_pcl ${PCL_LIBRARIES})
+
+target_link_libraries(denoising_server ${catkin_LIBRARIES})
+target_link_libraries(denoising_client ${catkin_LIBRARIES})
+
+target_link_libraries(occupancymap_generator_server ${catkin_LIBRARIES})
+target_link_libraries(occupancymap_generator_client ${catkin_LIBRARIES})
+
+target_link_libraries(conversion_extraction_server ${catkin_LIBRARIES})
+target_link_libraries(conversion_extraction_client ${catkin_LIBRARIES})
+
 
 
 
