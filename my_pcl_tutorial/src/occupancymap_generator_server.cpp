@@ -57,10 +57,11 @@ float width_scaled = width_float  / resolution - 1/2;
 float height_scaled= height_float / resolution - 1/2;
 width  = int(width_scaled)+2;
 height = int(height_scaled)+2; //Truncation to the lower int means we need to add 1 cell, and we want origin point to fall in the middle of the cell so we need to add 1 another cell. 
-std::cout<< "width ";
+std::cout<< "\n Information about the grid map:\n";
+std::cout<< "width=";
 std::cout<< width; 
-std::cout<<" height "; 
-std::cout<<height;std::cout<< " origine x "; std::cout<<min_x;std::cout << "lala max_x"; std::cout<< max_x;std::cout<< "  oki max_y "; std::cout << max_y; std::cout<<" origine y ";std::cout<<min_y;std::cout<< "min_z " ;std::cout<<min_z; std::cout << " max_z "; std::cout << max_z;
+std::cout<<" height="; 
+std::cout<<height;std::cout<< " origine_x= "; std::cout<<min_x;std::cout << " max_x="; std::cout<< max_x;std::cout<< " max_y= "; std::cout << max_y; std::cout<<" origine_y=";std::cout<<min_y;std::cout<< " min_z=" ;std::cout<<min_z; std::cout << " max_z="; std::cout << max_z;
 
 //Instantiate 2.5D map
 std::vector<std::vector<float>> twofiveD_depth(width*height);
@@ -246,11 +247,12 @@ rectangle_haut+=1;}
 if (restant_large!=0){
 rectangle_large+=1;}
 std::vector<std::vector<int>> mapdiscret(rectangle_large*rectangle_haut, std::vector<int>(3));
-std::cout<< "resolution ";
+std::cout<< "\n Information about discretized grid map: \n";
+std::cout<< "resolution=";
 std::cout<< cotes*resolution;
-std::cout<< " width : ";
+std::cout<< " width=";
 std::cout<< rectangle_large;
-std::cout<< " height : ";
+std::cout<< " height=";
 std::cout<< rectangle_haut;
 
 for (unsigned i=0;i!=height;i++){
@@ -407,7 +409,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "occupancymap_generator_server");
   ros::NodeHandle n;
 
-  ros::ServiceServer service = n.advertiseService("occupancymap generation", generator);
+  ros::ServiceServer service = n.advertiseService("occupancymap_generator", generator);
   ROS_INFO("Ready to generate a 2D Occupancy Grid map from a 3D DEM map (Pointcloud .pcd type)");
   ros::spin();
 

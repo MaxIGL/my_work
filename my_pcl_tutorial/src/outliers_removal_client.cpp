@@ -12,12 +12,12 @@ int main(int argc, char **argv)
   }
 
   ros::NodeHandle n;
-  ros::ServiceClient client = n.serviceClient<my_pcl_tutorial::outliers_removal>("removing_outliers");
+  ros::ServiceClient client = n.serviceClient<my_pcl_tutorial::outliers_removal>("outliers_removal");
   my_pcl_tutorial::outliers_removal srv;
   srv.request.file_in = argv[1];
   srv.request.file_out = argv[2];
   srv.request.radius_search = atof(argv[3]);
-  srv.request.min_neighbors_in_radius = atoll(argv[4]);
+  srv.request.min_neighbors_in_radius = atoi(argv[4]);
   if (client.call(srv))
   {
     ROS_INFO("The call of the service outliers_removal was a success");

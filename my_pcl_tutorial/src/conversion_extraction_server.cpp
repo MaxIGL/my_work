@@ -13,8 +13,8 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 
-bool conversion_extraction(my_pcl_tutorial::conversion_extracting::Request  &req,
-             my_pcl_tutorial::conversion_extracting::Response &res)
+bool conversion_extraction(my_pcl_tutorial::conversion_extraction::Request  &req,
+             my_pcl_tutorial::conversion_extraction::Response &res)
 {
 
 // Initialization

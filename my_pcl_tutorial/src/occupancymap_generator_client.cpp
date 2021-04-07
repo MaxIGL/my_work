@@ -12,7 +12,7 @@ int main(int argc, char **argv)
   }
 
   ros::NodeHandle n;
-  ros::ServiceClient client = n.serviceClient<my_pcl_tutorial::occupancymap_generator>("occupancy map generation");
+  ros::ServiceClient client = n.serviceClient<my_pcl_tutorial::occupancymap_generator>("occupancymap_generator");
   my_pcl_tutorial::occupancymap_generator srv;
   srv.request.file_in = argv[1];
   srv.request.file_out = argv[2];

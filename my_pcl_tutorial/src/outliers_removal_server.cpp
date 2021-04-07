@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "my_pcl_tutorial/denoising.h"
+#include "my_pcl_tutorial/outliers_removal.h"
 
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
@@ -11,7 +11,7 @@ bool outliers_remove(my_pcl_tutorial::outliers_removal::Request  &req,
 
 // Initialization
 
-ROS_INFO("request: file_in=%s, file_out=%s, radius_search=%lf, min_neighbors_in_radius=%d", req.file_in.c_str(), req.file_out.c_str(), req.radius_search, req.min_neighbors_in_radius);
+ROS_INFO("request: file_in=%s, file_out=%s, radius_search=%lf, min_neighbors_in_radius=%d", req.file_in.c_str(), req.file_out.c_str(), req.radius_search, (int)req.min_neighbors_in_radius);
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "outliers_removal_server");
   ros::NodeHandle n;
 
-  ros::ServiceServer service = n.advertiseService("outliers_removal", outliers_remove );
+  ros::ServiceServer service = n.advertiseService("outliers_removal", outliers_remove);
   ROS_INFO("Ready to remove the outliers of a Pointcloud (.pcd type)");
   ros::spin();
 

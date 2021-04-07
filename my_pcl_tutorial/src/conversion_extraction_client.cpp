@@ -12,8 +12,8 @@ int main(int argc, char **argv)
   }
 
   ros::NodeHandle n;
-  ros::ServiceClient client = n.serviceClient<my_pcl_tutorial::conversion_extracting>("conversion_extracting");
-  my_pcl_tutorial::conversion_extracting srv;
+  ros::ServiceClient client = n.serviceClient<my_pcl_tutorial::conversion_extraction>("conversion_extracting");
+  my_pcl_tutorial::conversion_extraction srv;
   srv.request.file_in = argv[1];
   srv.request.file_out = argv[2];
   if (client.call(srv))

@@ -70,6 +70,7 @@ find_package(Eigen3 REQUIRED)
    denoising.srv
    occupancymap_generator.srv
    conversion_extraction.srv
+   outliers_removal.srv
  )
 
 ## Generate actions in the 'action' folder
@@ -168,6 +169,10 @@ add_executable(occupancymap_generator_client src/occupancymap_generator_client.c
 add_executable(conversion_extraction_server src/conversion_extraction_server.cpp)
 add_executable(conversion_extraction_client src/conversion_extraction_client.cpp)
 
+add_executable(outliers_removal_server src/outliers_removal_server.cpp)
+add_executable(outliers_removal_client src/outliers_removal_client.cpp)
+
+
 
 
 ## Rename C++ executable without prefix
@@ -192,6 +197,9 @@ add_dependencies(occupancymap_generator_client my_pcl_tutorial_gencpp)
 
 add_dependencies(conversion_extraction_server my_pcl_tutorial_gencpp)
 add_dependencies(conversion_extraction_client my_pcl_tutorial_gencpp)
+
+add_dependencies(outliers_removal_server my_pcl_tutorial_gencpp)
+add_dependencies(outliers_removal_client my_pcl_tutorial_gencpp)
 
 
 target_link_libraries(example_pcl ${catkin_LIBRARIES})
@@ -220,6 +228,8 @@ target_link_libraries(occupancymap_generator_client ${catkin_LIBRARIES})
 target_link_libraries(conversion_extraction_server ${catkin_LIBRARIES})
 target_link_libraries(conversion_extraction_client ${catkin_LIBRARIES})
 
+target_link_libraries(outliers_removal_server ${catkin_LIBRARIES})
+target_link_libraries(outliers_removal_client ${catkin_LIBRARIES})
 
 
 
