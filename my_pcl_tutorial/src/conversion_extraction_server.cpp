@@ -1,6 +1,9 @@
 #include "ros/ros.h"
 #include "my_pcl_tutorial/conversion_extraction.h"
 
+#include "grid_map_core/GridMap.hpp"
+#include <grid_map_msgs/GridMap.h>
+
 #include "grid_map_ros/grid_map_ros.hpp"
 #include "grid_map_ros/GridMapRosConverter.hpp"
 #include "grid_map_ros/GridMapMsgHelpers.hpp"
