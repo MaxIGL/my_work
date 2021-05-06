@@ -16,12 +16,12 @@ int main(int argc, char** argv)
 //Initialization
 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
 pcl::PCDReader reader;
-reader.read ("/home/dcas/m.dreier/Documents/PCD_FILES/Test2/D435/gridmappclDenoisedx1.pcd", *cloud);
+reader.read ("/home/dcas/m.dreier/Documents/PCD_FILES/Test2/Lidar/grid_map_lidar_in_script_denoisedx1.pcd", *cloud);
 int width;
 int height;
 double origin_x;
 double origin_y;
-double resolution=0.06;
+double resolution=0.08;
 
 //Get Min and Max x and y and compute width and height of the 2D map
 float min_x = cloud->points[0].x, min_y = cloud->points[0].y, max_x = cloud->points[0].x, max_y = cloud->points[0].y,min_z=cloud->points[0].z,max_z=cloud->points[0].z;
@@ -230,7 +230,7 @@ occupancygrid.data=occupancygridlist;
 
 
 //Code for Jasmine map
-double res_discret=0.1;
+double res_discret=0.3;
 int cotes= res_discret/resolution+1;
 int rectangle_large=width/cotes;
 int restant_large=width-rectangle_large*cotes;
@@ -286,7 +286,7 @@ occupancygriddiscret.info.origin.orientation.w = 1.0;
 occupancygriddiscret.data=griddiscret;
 
 //Save the map to a file
-std::string mapname="/home/dcas/m.dreier/Documents/FinalGrid";
+std::string mapname="/home/dcas/m.dreier/Documents/PCD_FILES/Test2/Lidar/occupancy_denoisedx1_lidar";
 int threshold_free=25;
 int threshold_occupied=65;
 

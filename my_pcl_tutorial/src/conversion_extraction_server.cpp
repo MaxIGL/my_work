@@ -1,7 +1,7 @@
 #include "ros/ros.h"
 #include "my_pcl_tutorial/conversion_extraction.h"
 
-#include "grid_map_core/GridMap.hpp"
+//OAD
 #include <grid_map_msgs/GridMap.h>
 
 #include "grid_map_ros/grid_map_ros.hpp"

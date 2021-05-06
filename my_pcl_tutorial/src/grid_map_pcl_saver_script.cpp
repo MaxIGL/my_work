@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 {
 
 //Load From Bag
-const std::string pathToBag = "/home/dcas/m.dreier/Documents/PCD_FILES/Test3/Laser/elevation_map.bag";
+const std::string pathToBag = "/home/dcas/m.dreier/Documents/PCD_FILES/Test2/Lidar/elevation_map.bag";
 const std::string topic= "grid_map";
 grid_map::GridMap gridMap;
 
@@ -35,7 +35,7 @@ pcl::fromROSMsg (cloud_grid_PC2,*cloud_grid);
 
 // Save PCD to .PCD file
 pcl::PCDWriter writer;
-writer.write ("/home/dcas/m.dreier/Documents/PCD_FILES/Test3/Laser/Outside_banc_radiusx1_denoisexdx1_grid.pcd", *cloud_grid, false);
+writer.write ("/home/dcas/m.dreier/Documents/PCD_FILES/Test2/Lidar/grid_map_lidar_in_script.pcd", *cloud_grid, false);
 
 return(0);
 }
