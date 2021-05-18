@@ -22,6 +22,10 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   ar_track_alvar
   ar_track_alvar_msgs
+  tf2_ros
+  tf2
+  geometry_msgs
+  tf2_msgs
 )
 find_package(PCL 1.3 REQUIRED COMPONENTS segmentation)
 find_package(Eigen3 REQUIRED)
@@ -179,6 +183,8 @@ add_executable(pointcloud_saver_client src/pointcloud_saver_client.cpp)
 
 add_executable(ar_tracker_pcl src/ar_tracker_saver.cpp)
 
+add_executable(ar_tf_pcl src/ar_tf.cpp)
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -208,7 +214,10 @@ add_dependencies(outliers_removal_client my_pcl_tutorial_gencpp)
 
 add_dependencies(pointcloud_saver_server my_pcl_tutorial_gencpp)
 add_dependencies(pointcloud_saver_client my_pcl_tutorial_gencpp)
+
 add_dependencies(ar_tracker_pcl my_pcl_tutorial_gencpp)
+
+add_dependencies(ar_tf_pcl my_pcl_tutorial_gencpp)
 
 
 target_link_libraries(example_pcl ${catkin_LIBRARIES})
@@ -245,6 +254,8 @@ target_link_libraries(pointcloud_saver_client ${catkin_LIBRARIES})
 
 target_link_libraries(ar_tracker_pcl ${catkin_LIBRARIES})
 target_link_libraries(ar_tracker_pcl ${AR_TRACK_ALVAR_LIBRARIES})
+
+target_link_libraries(ar_tf_pcl ${catkin_LIBRARIES})
 
 
 #############
