@@ -20,7 +20,7 @@ bool generator(my_pcl_tutorial::occupancymap_generator::Request  &req,
 
 // Initialization
 
-ROS_INFO("request: file_in=%s, file_out=%s, frame_id=%s, resolution=%lf, resolution_discretized=%lf", req.file_in.c_str(), req.file_out.c_str(), req.frame_id.c_str(), req.resolution, req.resolution_discretized);
+ROS_INFO("request: file_in=%s, file_out=%s, frame_id=%s, resolution=%lf, resolution_discretized=%lf, resolution_grid_map_pcl_node=%lf", req.file_in.c_str(), req.file_out.c_str(), req.frame_id.c_str(), req.resolution, req.resolution_discretized, req.resolution_grid_map_pcl_node);
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
 pcl::PCDReader reader;
@@ -153,6 +153,10 @@ twoD_depth[num]=moyenne/compteur;
 
 // compute the depth gradient and register obstacles into 2D list
 std::vector<int8_t> occupancygridlist(width*height);
+double seuil;
+double resolution_grid_node=req.resolution_grid_map_pcl_node;
+seuil=resolution_grid_node+0.045*(1+8*fabs(resolution_grid_node-0.03));
+
 
 //Iteration on horizontal neighbors
 for (int j=0;j!=width-1;j++){
@@ -162,7 +166,7 @@ for (int i=0;i!=height;i++){
 if (twoD_depth[j+width*i]==-1) occupancygridlist[j+width*i]=-1;
 if (twoD_depth[j+width*i+1]==-1) occupancygridlist[j+1+width*i]=-1;
 if (twoD_depth[j+width*i]!=-1 and twoD_depth[j+1+width*i]!=-1){
-if(fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*i])>=0.075){ //Determine if the cell is the cell of an obstacle
+if((fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*i])>=seuil) and (fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*i])<=0.5)){ //Determine if the cell is the cell of an obstacle
 if(twoD_depth[j+width*i]>=twoD_depth[j+1+width*i]){
 occupancygridlist[j+width*i]=100;
 }
@@ -178,7 +182,7 @@ for (int i=0;i!=height-1;i++){
 if (twoD_depth[j+width*i]==-1) occupancygridlist[j+width*i]=-1;
 if (twoD_depth[j+width*(i+1)]==-1) occupancygridlist[j+width*(i+1)]=-1;
 if (twoD_depth[j+width*i]!=-1 and twoD_depth[j+width*(i+1)]!=-1){
-if(fabs(twoD_depth[j+width*i]-twoD_depth[j+width*(i+1)])>=0.075){ //Determine if the cell is the cell of an obstacle
+if((fabs(twoD_depth[j+width*i]-twoD_depth[j+width*(i+1)])>=seuil) and (fabs(twoD_depth[j+width*i]-twoD_depth[j+width*(i+1)])<=0.5)){ //Determine if the cell is the cell of an obstacle
 if(twoD_depth[j+width*i]>=twoD_depth[j+width*(i+1)]){
 occupancygridlist[j+width*i]=100;
 }
@@ -194,7 +198,7 @@ for (int i=1;i!=height;i++){
 if (twoD_depth[j+width*i]==-1) occupancygridlist[j+width*i]=-1;
  if (twoD_depth[j+1+width*(i-1)]==-1) occupancygridlist[j+1+width*(i-1)]=-1;
  if (twoD_depth[j+width*i]!=-1 and twoD_depth[j+1+width*(i-1)]!=-1){
-if(fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*(i-1)])>=0.075){ //Determine if the cell is the cell of an obstacle
+if((fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*(i-1)])>=seuil) and (fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*(i-1)])<=0.5)){ //Determine if the cell is the cell of an obstacle
 if(twoD_depth[j+width*i]>=twoD_depth[j+1+width*(i-1)]){
 occupancygridlist[j+width*i]=100;
 }
@@ -210,7 +214,7 @@ for (int i=0;i!=height-1;i++){
 if (twoD_depth[j+width*i]==-1) occupancygridlist[j+width*i]=-1;
 if (twoD_depth[j+1+width*(i+1)]==-1) occupancygridlist[j+1+width*(i+1)]=-1;
 if (twoD_depth[j+width*i]!=-1 and twoD_depth[j+1+width*(i+1)]!=-1){
-if(fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*(i+1)])>=0.075){ //Determine if the cell is the cell of an obstacle
+if((fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*(i+1)])>=seuil) and (fabs(twoD_depth[j+width*i]-twoD_depth[j+1+width*(i+1)])<=0.5)){ //Determine if the cell is the cell of an obstacle
 if(twoD_depth[j+width*i]>=twoD_depth[j+1+width*(i+1)]){
 occupancygridlist[j+width*i]=100;
 }

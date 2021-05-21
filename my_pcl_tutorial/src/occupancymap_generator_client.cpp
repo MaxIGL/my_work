@@ -5,9 +5,9 @@
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "occupancymap_generator");
-  if (argc != 6)
+  if (argc != 7)
   {
-    ROS_INFO("usage: occupancymap_generator file_in file_out frame_id resolution resolution_discretized");
+    ROS_INFO("usage: occupancymap_generator file_in file_out frame_id resolution resolution_discretized resolution_grid_map_pcl_node");
     return 1;
   }
 
@@ -19,6 +19,7 @@ int main(int argc, char **argv)
   srv.request.frame_id=argv[3];
   srv.request.resolution = atof(argv[4]);
   srv.request.resolution_discretized = atof(argv[5]);
+  srv.request.resolution_grid_map_pcl_node = atof(argv[6]);
   if (client.call(srv))
   {
     ROS_INFO("The call of the service occupancy map generator was a success");
