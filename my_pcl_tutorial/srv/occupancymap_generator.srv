@@ -3,4 +3,5 @@ string file_out
 string frame_id
 float64 resolution
 float64 resolution_discretized
+float64 resolution_grid_map_pcl_node
 ---
