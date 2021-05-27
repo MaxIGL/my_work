@@ -1,0 +1,7 @@
+skew clock compilation
+
+then check date
+ntp date if necessary
+
+if too much job catkin build -j3  for 3 core
+catkin clean "package"
