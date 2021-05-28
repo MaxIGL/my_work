@@ -23,7 +23,6 @@ int compteur=0;
 for (unsigned int i=0; i!=liste1.size();i++){
 for (unsigned int j=0;j!=liste2.size();j++){
 if (liste1[i]==liste2[j]){
-compteur+=1;
 ROS_INFO("A common ar_tag has been found ! The Ar_tag number %d has been detected in both databases.",liste1[i]); 
 std::vector<int> common_el;
 common_el.push_back(liste1[i]);
@@ -32,7 +31,6 @@ common_el.push_back(j);
 output.push_back(common_el);
 }
 }}
-ROS_INFO("That many iteration %d", compteur);
 return output;
 }
 
