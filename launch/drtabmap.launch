@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<launch>
+
+<param name="use_sim_time" value="true"/> <!-- only with rosbag -->
+<node pkg="tf" type="static_transform_publisher" name="depth_camera" args="0 0.052 0.013 0 0 0 1 T265_link D435_link 100"/>
+
+<node name = "info_topic_throttler" type="drop" pkg="topic_tools" args= "/D435/color/camera_info 4 5 /D435/color/camera_info/throttled" />
+
+
+<node name="republish_rgb" type="republish" pkg="image_transport" args="compressed in:=/D435/color/image_raw raw out:=/D435/color/image_raw/relay" />
+
+<node name = "color_topic_throttler" type="drop" pkg="topic_tools" args= "/D435/color/image_raw/relay 4 5 /D435/color/image_raw/relay/throttled" />
+
+<node pkg="static_transform_mux" type="static_transform_mux" name="static_transform"  output="screen"/>
+
+<group ns="/slam/">
+    <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
+       <arg name="rtabmap_args"        value="--delete_db_on_start --Optimizer/GravitySigma 0.3" />
+      <arg name="rgbd_sync" value="true"/>
+      <arg name="approx_rgbd_sync" value="false"/>
+<arg name="rgbd_topic" value="/D435/depth/color/points"/>
+
+      <arg name="queue_size" value="100"/>
+      <arg name="rgb_topic"               value="/D435/color/image_raw/relay/throttled" />
+      <arg name="depth_topic"             value="/D435/depth/color/points" />
+      <arg name="camera_info_topic"       value="/D435/color/camera_info/throttled" />
+      <arg name="depth_camera_info_topic" value="/D435/depth/camera_info" />
+      <arg name="frame_id"                      value="/T265_link" />
+      <arg name="odom_frame_id"                 value="/T265_odom_frame" />
+      <arg name="approx_sync"                   value="true" />
+      <arg name="visual_odometry"               value="false" />
+      <arg name="rtabmapviz"                    value="false" />
+      <arg name="rviz"                          value="false" />
+      <arg name="odom_topic"                    value="/T265/odom/sample" />
+      <arg name="imu_topic"                     value="/imu/data"/> 
+    
+    </include>
+</group>
+
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+        <param name="resolution" value="0.3" />
+        <param name="frame_id" type="string" value="/map" />
+        <param name="max_sensor_range" value="7.0" />
+        <param name="latch" value="false" />
+        <param name="pointcloud_max_z" value="200" />
+        <param name="pointcloud_min_z" value="-200" />
+      <param name="filter_ground" value="false" />
+    <param name="base_frame_id" value="/map" />
+        <remap from="cloud_in" to="/slam/rtabmap/cloud_map" />
+  </node>
+</launch> 

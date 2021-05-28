@@ -4,7 +4,8 @@
 <!-- tf static tranform -->
 
      <param name="use_sim_time"  value="true"/>
-     <node pkg="tf" type="static_transform_publisher" name="depth_camera" args="0 0 0  0 0.707 0 0.707 Quadri_MK_4 D435_link 100"/>
+     <node pkg="tf" type="static_transform_publisher" name="depth_camera" args="0 0.052 0.013 0 0 0 1 T265_pose_frame D435_link 100"/>
+<node pkg="tf" type="static_transform_publisher" name="tracking_camera" args="0 0 0 0 0 0 1 map T265_odom_frame 100"/>
 
 <!-- reducing frequency -->
 
@@ -29,8 +30,8 @@
         args="standalone pcl/RadiusOutlierRemoval">
     <remap from="~input" to="voxel_grid/output" />
     <rosparam>
-      min_neigbors: 4
-      radius_search: 0.045
+      min_neigbors: 5
+      radius_search: 0.06
     </rosparam>
   </node >
 
@@ -53,16 +54,10 @@
 		<param name="frame_id" type="string" value="map" />
 		
 		<!-- maximum range to integrate (speedup!) -->
-		<param name="sensor_model/max_range" value="4.0" />
+		<param name="sensor_model/max_range" value="3.5" />
 		
 		<!-- data source to integrate (PointCloud2) -->
 		<remap from="cloud_in" to="statistical_outlier_removal/output" />
-		
-		<param name="base_frame_id" value="world" />
-		<param name="filter_ground" value="false" />
-		<param name="ground_filter/distance" value="0.1" />
-		<param name="ground_filter/angle" value="0.05" />
-		<param name="ground_filter/plane_distance" value="0.1" />
 
 
 <param name="occupancy_min_z" value="-3" />
@@ -70,4 +65,6 @@
 	</node>
 
 
+
 </launch>
+
