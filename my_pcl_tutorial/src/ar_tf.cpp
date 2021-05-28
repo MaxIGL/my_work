@@ -161,7 +161,7 @@ std::vector<std::vector<int>> common_elements=common(ID_1,ID_2);
 std::vector<float> T_12;
 T_12.push_back(POSITION_X_2[common_elements[0][2]]-POSITION_X_1[common_elements[0][1]]);
 T_12.push_back(POSITION_Y_2[common_elements[0][2]]-POSITION_Y_1[common_elements[0][1]]);
-T_12.push_back(POSITION_Z_2[common_elements[0][2]]-POSITION_Z_1[common_elements[0][1]]);
+T_12.push_back(0.0);
 
 //Rotation
 tf2::Quaternion q1(QUATERNION_X_1[common_elements[0][1]],QUATERNION_Y_1[common_elements[0][1]],QUATERNION_Z_1[common_elements[0][1]],-QUATERNION_W_1[common_elements[0][1]]);
