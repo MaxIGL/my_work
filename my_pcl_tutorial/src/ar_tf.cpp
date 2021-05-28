@@ -19,9 +19,11 @@ std::vector<std::vector<int>> common(std::vector<int> liste1, std::vector<int> l
 {
 //This function search for common elements in liste1 and liste2 along with their positions in the respective lists
 std::vector<std::vector<int>> output;
+int compteur=0;
 for (unsigned int i=0; i!=liste1.size();i++){
 for (unsigned int j=0;j!=liste2.size();j++){
 if (liste1[i]==liste2[j]){
+compteur+=1;
 ROS_INFO("A common ar_tag has been found ! The Ar_tag number %d has been detected in both databases.",liste1[i]); 
 std::vector<int> common_el;
 common_el.push_back(liste1[i]);
@@ -30,6 +32,7 @@ common_el.push_back(j);
 output.push_back(common_el);
 }
 }}
+ROS_INFO("That many iteration %d", compteur);
 return output;
 }
 
@@ -50,6 +53,8 @@ nh.getParam("child_frame",child_frame);
 ROS_INFO("Started Linking TF Node");
 ros::Rate rate(0.2);
 
+
+while(nh.ok()){
 
 //Databases initialization
         std::string ID, POSITION_X, POSITION_Y, POSITION_Z, QUATERNION_X, QUATERNION_Y, QUATERNION_Z, QUATERNION_W, POSITION_CONFIDENCE; //variables from file are here
@@ -73,7 +78,6 @@ ros::Rate rate(0.2);
         std::vector<float>QUATERNION_Z_2;
         std::vector<float>QUATERNION_W_2;
         std::vector<int>POSITION_CONFIDENCE_2;
-while(nh.ok()){
 
 //Reading Database 1
         std::ifstream database1(data_1); //opening the file.
@@ -157,9 +161,9 @@ std::vector<std::vector<int>> common_elements=common(ID_1,ID_2);
 
 //Translation
 std::vector<float> T_12;
-T_12.push_back(POSITION_X_2[common_elements[0][2]]-POSITION_X_2[common_elements[0][1]]);
-T_12.push_back(POSITION_Y_2[common_elements[0][2]]-POSITION_Y_2[common_elements[0][1]]);
-T_12.push_back(POSITION_Z_2[common_elements[0][2]]-POSITION_Z_2[common_elements[0][1]]);
+T_12.push_back(POSITION_X_2[common_elements[0][2]]-POSITION_X_1[common_elements[0][1]]);
+T_12.push_back(POSITION_Y_2[common_elements[0][2]]-POSITION_Y_1[common_elements[0][1]]);
+T_12.push_back(POSITION_Z_2[common_elements[0][2]]-POSITION_Z_1[common_elements[0][1]]);
 
 //Rotation
 tf2::Quaternion q1(QUATERNION_X_1[common_elements[0][1]],QUATERNION_Y_1[common_elements[0][1]],QUATERNION_Z_1[common_elements[0][1]],-QUATERNION_W_1[common_elements[0][1]]);
