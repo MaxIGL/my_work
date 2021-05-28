@@ -224,6 +224,7 @@ occupancygridlist[j+1+width*(i+1)]=100;} //Add obstacle and only obstacle on the
 }}}}
 
 //Create the final sensor::msg occupancygrid 2D occupancy map
+occupancygridlist.reverse();
 
 nav_msgs::OccupancyGrid occupancygrid;
 occupancygrid.header.frame_id=req.frame_id;
