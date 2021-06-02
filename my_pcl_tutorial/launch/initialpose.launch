@@ -1,0 +1,11 @@
+<?xml version="1.0"?> 
+<launch>
+
+	<node name="initialposeamcl" pkg="my_pcl_tutorial" type="initpose_pcl" output="screen">
+<param name="topic_in" value ="/tf_static"/>
+<param name="topic_out" value ="/initialpose"/>
+
+<param name="parent_frame" value ="map"/>
+<param name="child_frame" value ="T265"/>
+</node>
+</launch>
