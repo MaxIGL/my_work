@@ -157,7 +157,6 @@ add_definitions(${PCL_DEFINITIONS})
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/my_pcl_tutorial_node.cpp)
 add_executable(example_pcl src/example.cpp)
-add_executable(try_pcl src/try.cpp)
 add_executable(essai2_pcl src/essai2.cpp)
 add_executable(radius_pcl src/radius.cpp)
 add_executable(radius_script_pcl src/radius_script.cpp)
@@ -184,6 +183,8 @@ add_executable(pointcloud_saver_client src/pointcloud_saver_client.cpp)
 add_executable(ar_tracker_pcl src/ar_tracker_saver.cpp)
 
 add_executable(ar_tf_pcl src/ar_tf.cpp)
+
+add_executable(initpose_pcl src/initialpose.cpp)
 
 
 ## Rename C++ executable without prefix
@@ -219,9 +220,10 @@ add_dependencies(ar_tracker_pcl my_pcl_tutorial_gencpp)
 
 add_dependencies(ar_tf_pcl my_pcl_tutorial_gencpp)
 
+add_dependencies(initpose_pcl my_pcl_tutorial_gencpp)
+
 
 target_link_libraries(example_pcl ${catkin_LIBRARIES})
-target_link_libraries(try_pcl ${catkin_LIBRARIES})
 target_link_libraries(essai2_pcl ${catkin_LIBRARIES})
 target_link_libraries(essai2_pcl ${PCL_LIBRARIES})
 target_link_libraries(radius_pcl ${catkin_LIBRARIES})
@@ -257,6 +259,7 @@ target_link_libraries(ar_tracker_pcl ${AR_TRACK_ALVAR_LIBRARIES})
 
 target_link_libraries(ar_tf_pcl ${catkin_LIBRARIES})
 
+target_link_libraries(initpose_pcl ${catkin_LIBRARIES})
 
 #############
 ## Install ##
