@@ -383,20 +383,9 @@ std::string maptxtdatafile = mapname + ".txt";
         return 0;
       }
 
-      fprintf(txt, "P5\n# CREATOR: Grid_map_generator.cpp \n%d %d\n255\n",
-               occupancygrid.info.width, occupancygrid.info.height);
-      for(unsigned int y = 0; y < occupancygrid.info.height; y++) {
-        for(unsigned int x = 0; x < occupancygrid.info.width; x++) {
-          unsigned int i = x + (occupancygrid.info.height - y - 1) * occupancygrid.info.width;
-if ((x+y)%15==0) fprintf(txt,"\n");
-          if (occupancygrid.data[i] >= 0 && occupancygrid.data[i] <= threshold_free) { // Free is 254 : white
-            fprintf( txt,"%d ", 254);
-          } else if (occupancygrid.data[i] >= threshold_occupied) { // Occupied is black : 000
-            fprintf( txt, "%d ",000);
-          } else { //unknown is 205 gray scale
-            fprintf( txt, "%d ", 205);
-          }
-        }
+      fprintf(txt, "%.3f\n%d\n%d\n%s\n%.3f\n%.3f\n", occupancygrid.info.resolution, occupancygrid.info.width, occupancygrid.info.height, occupancygrid.header.frame_id,occupancygrid.info.origin.position.x, occupancygrid.info.origin.position.y);
+      for(unsigned int cell = 0; cell < occupancygrid.data.size(); cell++) {
+       fprintf(txt, "%d ", occupancygrid.data[cell]);
       }
       fclose(txt);
 
