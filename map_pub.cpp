@@ -26,37 +26,34 @@ nh.getParam("topic_out",topic_out);
 ROS_INFO("Occupancy map publisher started");
 ros::Rate rate(0.2);
 
-
-while(nh.ok()){
-
 //Databases initialization
         std::string wid,hei,frame_id,res; //variables from file are here
-	std::string cell;
+        std::string cell;
 
         std::vector<int>ID;
         int width;
-	int height;
-	double resolution;
-	std::vector<int8_t> occupancygridlist;
-	double origine_x,origine_y;
+        int height;
+        double resolution;
+        std::vector<int8_t> occupancygridlist;
+        double origin_x,origin_y;
 
 //Reading Database 1
-        std::ifstream database(data); //opening the file.
+        std::ifstream database(map_file); //opening the file.
         if (database.is_open()) //if the file is open
         {
                 ROS_INFO("Reading the map");
                 getline(database, res, '\n');
-		resolution=stof(res);
-		getline(database, wid, '\n');
-		width=stoi(wid);
-		getline(database,hei,'\n');
-		height=stoi(hei);
-		getline(database,frame_id,'\n');
-		std::string line;
-		getline(database,line,'\n');
-		origine_x=stof(line);
-		getline(database,line,'\n');
-		origine_y=stof(line);
+                resolution=stof(res);
+                getline(database, wid, '\n');
+                width=stoi(wid);
+                getline(database,hei,'\n');
+                height=stoi(hei);
+                getline(database,frame_id,'\n');
+                std::string line;
+                getline(database,line,'\n');
+                origin_x=stof(line);
+                getline(database,line,'\n');
+                origin_y=stof(line);
 
                 while (true)
                 {
@@ -70,7 +67,7 @@ while(nh.ok()){
         else ROS_INFO("Unable to open map file"); //if the file is not open output
 
 nav_msgs::OccupancyGrid occupancygrid;
-occupancygrid.header.frame_id=req.frame_id;
+occupancygrid.header.frame_id=frame_id;
 occupancygrid.info.resolution=resolution;
 occupancygrid.info.width=width;
 occupancygrid.info.height=height;
@@ -88,8 +85,9 @@ ros::Publisher pub = nh.advertise<nav_msgs::OccupancyGrid>(topic_out, 1);
   {
     
 pub.publish(occupancygrid);
-    loop_rate.sleep();
+    rate.sleep();
   }
 
 return 0;
 }
+
