@@ -1,3 +1,4 @@
+
 #include "ros/ros.h"
 #include "my_pcl_tutorial/occupancymap_planner.h"
 
@@ -7,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <iomanip> //used for formatting outputs
+#include <iostream>
 #include <fstream>
 
 std::vector<std::vector<int8_t>> map_matrix(std::vector<int8_t> list, int width, int height){
@@ -17,13 +20,13 @@ matrix[i][j]=list[i*height+j];}}
 return matrix;
 }
 
-int check_neighbors(i1,j1,i2,j2,matrix){
+int check_neighbors(int i1,int j1,int i2,int j2,std::vector<std::vector<int8_t>> matrix){
 int path=0;
 if (matrix[i1][j1]!=0 or matrix[i2][j2]!=0){
 path=100;}
 return path;}
 
-std::vector<int>(2) xytoindex(x,y,origin_x,origin_y,resolution){
+std::vector<int> xytoindex(double x,double y,double origin_x,double origin_y,double resolution){
 int i,j;
 //Colonne
 float cell_x= (x-origin_x)/resolution -1/2; //normalement compris entre j-1 et j
@@ -33,11 +36,12 @@ else j= int(cell_x)+1;
 float cell_y= (y-origin_y)/resolution -1/2; //normalement compris entre i-1 et i
 if (cell_y<=0) i=0;
 else i= int(cell_y)+1;
-std::vector<int>(2) index;
+std::vector<int> index(2);
 index[0]=i;
 index[1]=j;
 return index;
 }
+
 
 
 bool map_planner(my_pcl_tutorial::occupancymap_planner::Request  &req,
@@ -46,37 +50,36 @@ bool map_planner(my_pcl_tutorial::occupancymap_planner::Request  &req,
 
 // Initialization
 
-ROS_INFO("request: file_in_map=%s, file_in_artag=%s, file_out=%s, resolution_discretized=%lf, req.file_in_map.c_str(), req.file_in_artag.c_str(), req.file_out.c_str(), req.resolution_discretized);
+ROS_INFO("request: file_in_map=%s, file_in_artag=%s, file_out=%s, resolution_discretized=%lf", req.file_in_map.c_str(), req.file_in_artag.c_str(), req.file_out.c_str(), req.resolution_discretized);
 
 
 //Databases initialization
-        std::string wid,hei,frame_id,res; //variables from file are here
-	std::string cell;
-	std::string data=req.file_in_map;
-        std::vector<int>ID;
+        std::string wid,hei,frame_id,reso; //variables from file are here
+        std::string cell;
+        std::string data=req.file_in_map;
         int width;
-	int height;
-	double resolution;
-	std::vector<int8_t> occupancygridlist;
-	double origine_x,origine_y;
+        int height;
+        double resolution;
+        std::vector<int8_t> occupancygridlist;
+        double origin_x,origin_y;
 
 //Reading Database 1
         std::ifstream database(data); //opening the file.
         if (database.is_open()) //if the file is open
         {
                 ROS_INFO("Reading the map");
-                getline(database, res, '\n');
-		resolution=stof(res);
-		getline(database, wid, '\n');
-		width=stoi(wid);
-		getline(database,hei,'\n');
-		height=stoi(hei);
-		getline(database,frame_id,'\n');
-		std::string line;
-		getline(database,line,'\n');
-		origine_x=stof(line);
-		getline(database,line,'\n');
-		origine_y=stof(line);
+                getline(database, reso, '\n');
+                resolution=stof(reso);
+                getline(database, wid, '\n');
+                width=stoi(wid);
+                getline(database,hei,'\n');
+                height=stoi(hei);
+                getline(database,frame_id,'\n');
+                std::string line;
+                getline(database,line,'\n');
+                origin_x=stof(line);
+                getline(database,line,'\n');
+                origin_y=stof(line);
 
                 while (true)
                 {
@@ -88,8 +91,6 @@ ROS_INFO("request: file_in_map=%s, file_in_artag=%s, file_out=%s, resolution_dis
                 database.close(); //closing the file
         }
         else ROS_INFO("Unable to open map file"); //if the file is not open output
-
-
 
 //Code for Jasmine map, Discretization of initial grid map
 double res_discret=req.resolution_discretized;
@@ -142,18 +143,18 @@ for(unsigned int i=0; i!=griddiscret.size();i++){
 waypoints.append("\n");
 
 //Create a matrix map out of the discretized map
-std::vector<std::vector<int8_t>> map= map_matrix(griddiscret, rectangle_large,rectangle_haut);
+std::vector<std::vector<int8_t>> matrix= map_matrix(griddiscret, rectangle_large,rectangle_haut);
 
 
 std::string can_traverse;
 std::string can_traverse_drone;
-//Can traverse east-west ?
+/Can traverse east-west ?
 for(unsigned i=0;i!=rectangle_haut;i++){
 for (unsigned j=0;j!=rectangle_large-1;j++){
 can_traverse_drone.append("(can_traverse drone1 waypoint%d waypoint%d)\n", i*rectangle_large+j, i*rectangle_large+j+1);
 can_traverse_drone.append("(can_traverse drone1 waypoint%d waypoint%d)\n", i*rectangle_large+j+1, i*rectangle_large+j);
 if(matrix[i][j]==0){
-if(matrix[i][j+1]==0]{
+if(matrix[i][j+1]==0){
 can_traverse.append("(can_traverse rover0 waypoint%d waypoint%d)\n", i*rectangle_large+j, i*rectangle_large+j+1);
 can_traverse.append("(can_traverse rover0 waypoint%d waypoint%d)\n", i*rectangle_large+j+1, i*rectangle_large+j);
 }}}}
@@ -165,7 +166,7 @@ for (unsigned j=0;j!=rectangle_large;j++){
 can_traverse_drone.append("(can_traverse drone1 waypoint%d waypoint%d)\n", i*rectangle_large+j, (i+1)*rectangle_large+j);
 can_traverse_drone.append("(can_traverse drone1 waypoint%d waypoint%d)\n", (i+1)*rectangle_large+j, i*rectangle_large+j);
 if(matrix[i][j]==0){
-if(matrix[i+1][j]==0]{
+if(matrix[i+1][j]==0){
 can_traverse.append("(can_traverse rover0 waypoint%d waypoint%d)\n", i*rectangle_large+j, (i+1)*rectangle_large+j);
 can_traverse.append("(can_traverse rover0 waypoint%d waypoint%d)\n", (i+1)*rectangle_large+j, i*rectangle_large+j);
 }}}}
@@ -176,10 +177,10 @@ for (unsigned int j=1;j!=rectangle_large;j++){
 can_traverse_drone.append("(can_traverse drone1 waypoint%d waypoint%d)\n", i*rectangle_large+j, (i+1)*rectangle_large+j-1);
 can_traverse_drone.append("(can_traverse drone1 waypoint%d waypoint%d)\n", (i+1)*rectangle_large+j-1, i*rectangle_large+j);
 if(matrix[i][j]==0){
-if(check_neighbors(i,j-1,i+1,j,map)==0){
+if(check_neighbors(i,j-1,i+1,j,matrix)==0){
 if(matrix[i+1][j-1]==0){
-fprintf(txt, "(can_traverse rover0 waypoint%d waypoint%d)\n", i*rectangle_large+j, (i+1)*rectangle_large+j-1);
-fprintf(txt, "(can_traverse rover0 waypoint%d waypoint%d)\n", (i+1)*rectangle_large+j-1, i*rectangle_large+j);
+can_traverse.append( "(can_traverse rover0 waypoint%d waypoint%d)\n", i*rectangle_large+j, (i+1)*rectangle_large+j-1);
+can_traverse.append("(can_traverse rover0 waypoint%d waypoint%d)\n", (i+1)*rectangle_large+j-1, i*rectangle_large+j);
 }}}}}
 
 //Can traverse anti-diagonal (northeast/southwest) ?
@@ -188,7 +189,7 @@ for (unsigned int j=0;j!=rectangle_large-1;j++){
 can_traverse_drone.append("(can_traverse drone1 waypoint%d waypoint%d)\n", i*rectangle_large+j, (i+1)*rectangle_large+j+1);
 can_traverse_drone.append("(can_traverse drone1 waypoint%d waypoint%d)\n", (i+1)*rectangle_large+j+1, i*rectangle_large+j);
 if(matrix[i][j]==0){
-if(check_neighbors(i+1,j,i,j+1,map)==0){
+if(check_neighbors(i+1,j,i,j+1,matrix)==0){
 if(matrix[i+1][j+1]==0){
 can_traverse.append("(can_traverse rover0 waypoint%d waypoint%d)\n", i*rectangle_large+j, (i+1)*rectangle_large+j+1);
 can_traverse.append("(can_traverse rover0 waypoint%d waypoint%d)\n", (i+1)*rectangle_large+j+1, i*rectangle_large+j);
@@ -198,57 +199,57 @@ can_traverse_drone.append("\n");
 
 //Objectives as AR tag
 //Reading the AR tag database
-	std::string ID, POSITION_X,POSITION_Y,POSITION_Z,POSITION_CONFIDENCE; //variables from file are here
-	std::vector<int>ID_v;
-	std::vector<int>POSITION_CONFIDENCE_v;
-	std::vector<float>POSITION_X_v,POSITION_Y_v;
+        std::string ID, POSITION_X,POSITION_Y,POSITION_Z,POSITION_CONFIDENCE; //variables from file are here
+        std::vector<int> ID_v;
+        std::vector<int>POSITION_CONFIDENCE_v;
+        std::vector<float>POSITION_X_v,POSITION_Y_v;
 
-	//input filename
-	std::string filenametag=req.file_in_artag;
+        //input filename
+        std::string filenametag=req.file_in_artag;
 
-	//number of lines
-	std::ifstream datatag(filenametag); //opening the file.
-	if (datatag.is_open()) //if the file is open
-	{
-		//ignore first line
-		std::string line;
-		getline(datatag, line);
+        //number of lines
+        std::ifstream datatag(filenametag); //opening the file.
+        if (datatag.is_open()) //if the file is open
+        {
+                //ignore first line
+                std::string line;
+                getline(datatag, line);
 
-		while (true)
-		{
-			getline(datatag, ID, ',');
-			if (datatag.eof()) break;
-			ID_v.push_back(stoi(ID));
-			getline(datatag, POSITION_CONFIDENCE, ',');
-			getline(datatag, POSITION_X, ',');
-			POSITION_X_v.push_back(stof(POSITION_X));
-			getline(datatag, POSITION_Y, ',');
-			POSITION_Y_v.push_back(stof(POSITION_Y));
-			getline(datatag, POSITION_Z, '\n');
-			/*POSITION_Z_v.push_back(stof(POSITION_Z));
-			getline(datatag, QUATERNION_X, ',');
-			QUATERNION_X_v.push_back(stof(QUATERNION_X));
-			getline(datatag, QUATERNION_Y, ',');
-			QUATERNION_Y_v.push_back(stof(QUATERNION_Y));
-			getline(datatag, QUATERNION_Z, ',');
-			QUATERNION_Z_v.push_back(stof(QUATERNION_Z));
-			getline(datatag, QUATERNION_W, '\n');
-			QUATERNION_W_v.push_back(stof(QUATERNION_W));*/
-			
-		}
-		datatag.close(); //closing the file
-	}
-	else std::cout << "Unable to open AR tag database file"; //if the file is not open output
+                while (true)
+                {
+                        getline(datatag, ID, ',');
+                        if (datatag.eof()) break;
+                        ID_v.push_back(stoi(ID));
+                        getline(datatag, POSITION_CONFIDENCE, ',');
+                        getline(datatag, POSITION_X, ',');
+                        POSITION_X_v.push_back(stof(POSITION_X));
+                        getline(datatag, POSITION_Y, ',');
+                        POSITION_Y_v.push_back(stof(POSITION_Y));
+                        getline(datatag, POSITION_Z, '\n');
+                        /*POSITION_Z_v.push_back(stof(POSITION_Z));
+                        getline(datatag, QUATERNION_X, ',');
+                        QUATERNION_X_v.push_back(stof(QUATERNION_X));
+                        getline(datatag, QUATERNION_Y, ',');
+                        QUATERNION_Y_v.push_back(stof(QUATERNION_Y));
+                        getline(datatag, QUATERNION_Z, ',');
+                        QUATERNION_Z_v.push_back(stof(QUATERNION_Z));
+                        getline(datatag, QUATERNION_W, '\n');
+                        QUATERNION_W_v.push_back(stof(QUATERNION_W));*/
+
+                }
+                datatag.close(); //closing the file
+        }
+        else std::cout << "Unable to open AR tag database file"; //if the file is not open output
 
 
 std::string objectives;
 std::string visible_objectives_drone;
 std::string visible_objectives_rover;
-std::vector<int>(2) index(x,y,origin_x,origin_y,resolution){
+std::vector<int> index;
 for (unsigned int i=0;i!=ID_v.size();i++){
 if(ID_v[i]<=23 and ID_v[i]>=0){
 objectives.append("objective%d - objective\n",ID_v[i]);
-index=xytoindex(POSITION_X_v[i],POSITION_Y_v[i],origin_x,origin_y,resolution_discretized);
+index=xytoindex(POSITION_X_v[i],POSITION_Y_v[i],origin_x,origin_y,res_discret);
 visible_objectives_drone.append("(visible_from objective%d waypoint%d drone1)\n",ID_v[i],index[0]*rectangle_large+index[1]);
 //Check if on border south
 if(index[0]!=0){
@@ -272,33 +273,32 @@ visible_objectives_rover.append("(visible_from objective%d waypoint%d rover0)\n"
 }}
 
 }}
-obectives.append("\n");
+objectives.append("\n");
 
 
 
 
 
-std::string mapplannertxtdatafile = mapplannername + ".txt";
+std::string mapplannertxtdatafile = req.file_out + ".txt";
  ROS_INFO("Writing waypoints data to %s", mapplannertxtdatafile.c_str());
       FILE* txt = fopen(mapplannertxtdatafile.c_str(), "w");
       if (!txt)
       {
-        std::cout<< "Couldn't write on %s", maptxtdatafile.c_str();
+        std::cout<< "Couldn't write on %s", mapplannertxtdatafile.c_str();
         return false;
       }
- fprintf(txt,waypoints);
- fprintf(txt,objectives);
- fprintf(txt,can_traverse);
- fprintf(txt,can_traverse_drone);
- fprintf(txt,visible_objectives_rover);
- fprintf(txt,visible_objectives_drone);
+ fprintf(txt,"%s",waypoints.c_str());
+ fprintf(txt,"%s",objectives.c_str());
+ fprintf(txt,"%s",can_traverse.c_str());
+ fprintf(txt,"%s",can_traverse_drone.c_str());
+ fprintf(txt,"%s",visible_objectives_rover.c_str());
+ fprintf(txt,"%s",visible_objectives_drone.c_str());
 
  fclose(txt);
 
    ROS_INFO("Sending back response: The grid map plan was generated") ;
   return true;
 }
-
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "occupancymap_planner_server");
@@ -310,3 +310,7 @@ int main(int argc, char **argv)
 
   return 0;
 }
+
+
+
+
